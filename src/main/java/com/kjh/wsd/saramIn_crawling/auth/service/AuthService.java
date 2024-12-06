@@ -1,8 +1,10 @@
-package com.kjh.wsd.saramIn_crawling.auth;
+package com.kjh.wsd.saramIn_crawling.auth.service;
 
-import com.kjh.wsd.saramIn_crawling.model.User;
-import com.kjh.wsd.saramIn_crawling.repository.UserRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.kjh.wsd.saramIn_crawling.auth.exception.InvalidCredentialsException;
+import com.kjh.wsd.saramIn_crawling.auth.security.JwtUtil;
+import com.kjh.wsd.saramIn_crawling.auth.exception.UserNotFoundException;
+import com.kjh.wsd.saramIn_crawling.user.model.User;
+import com.kjh.wsd.saramIn_crawling.user.repository.UserRepository;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;

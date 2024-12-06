@@ -1,4 +1,4 @@
-package com.kjh.wsd.saramIn_crawling.auth;
+package com.kjh.wsd.saramIn_crawling.auth.exception;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

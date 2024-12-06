@@ -1,7 +1,6 @@
 package com.kjh.wsd.saramIn_crawling.config;
 
-import com.kjh.wsd.saramIn_crawling.auth.JwtFilter;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.kjh.wsd.saramIn_crawling.auth.security.JwtFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;

@@ -1,6 +1,6 @@
-package com.kjh.wsd.saramIn_crawling.repository;
+package com.kjh.wsd.saramIn_crawling.user.repository;
 
-import com.kjh.wsd.saramIn_crawling.model.User;
+import com.kjh.wsd.saramIn_crawling.user.model.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;

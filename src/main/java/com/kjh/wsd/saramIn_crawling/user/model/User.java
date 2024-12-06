@@ -1,4 +1,4 @@
-package com.kjh.wsd.saramIn_crawling.model;
+package com.kjh.wsd.saramIn_crawling.user.model;
 
 import jakarta.persistence.*;
 import lombok.Data;

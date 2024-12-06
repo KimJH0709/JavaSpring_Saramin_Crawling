@@ -1,7 +1,8 @@
-package com.kjh.wsd.saramIn_crawling.auth;
+package com.kjh.wsd.saramIn_crawling.auth.controller;
 
+import com.kjh.wsd.saramIn_crawling.auth.service.AuthService;
 import com.kjh.wsd.saramIn_crawling.dto.LoginRequest;
-import com.kjh.wsd.saramIn_crawling.model.User;
+import com.kjh.wsd.saramIn_crawling.user.model.User;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
