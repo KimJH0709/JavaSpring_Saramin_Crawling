@@ -3,6 +3,7 @@ package com.kjh.wsd.saramIn_crawling.auth;
 import com.kjh.wsd.saramIn_crawling.model.User;
 import com.kjh.wsd.saramIn_crawling.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -39,17 +40,14 @@ public class AuthService {
     }
 
     public String loginUser(String username, String password) {
-        Optional<User> existingUser = userRepository.findByUsername(username);
-        if (existingUser.isEmpty()) {
-            throw new RuntimeException("Invalid username or password.");
-        }
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new UserNotFoundException("Invalid username"));
 
-        User user = existingUser.get();
+        BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
         if (!passwordEncoder.matches(password, user.getPassword())) {
-            throw new RuntimeException("Invalid username or password.");
+            throw new InvalidCredentialsException("Invalid password");
         }
 
-        // JWT 토큰 발급
-        return jwtUtil.generateToken(user.getUsername());
+        return jwtUtil.generateToken(username);
     }
 }
