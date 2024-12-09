@@ -1,50 +1,54 @@
 package com.kjh.wsd.saramIn_crawling.job.controller;
 
-import com.kjh.wsd.saramIn_crawling.job.dto.JobRequest;
-import com.kjh.wsd.saramIn_crawling.job.dto.JobResponse;
-import com.kjh.wsd.saramIn_crawling.job.service.JobPostingService;
+import com.kjh.wsd.saramIn_crawling.job.model.Job;
+import com.kjh.wsd.saramIn_crawling.job.service.JobService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.io.IOException;
-import java.util.List;
 
 @RestController
 @RequestMapping("/jobs")
 @RequiredArgsConstructor
 public class JobController {
 
-    private final JobPostingService jobPostingService;
+    private final JobService service;
 
     @GetMapping
-    public ResponseEntity<Page<JobResponse>> getJobs(
-            @RequestParam(required = false) String location,
-            @RequestParam(required = false) String experience,
-            @RequestParam(required = false) String salary,
-            @RequestParam(required = false) String position,
+    public ResponseEntity<Page<Job>> getJobs(
             @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "20") int size
-    ) throws IOException {
-        JobRequest jobRequest = JobRequest.builder()
-                .location(location)
-                .experience(experience)
-                .salary(salary)
-                .position(position)
-                .size(size)
-                .build();
+            @RequestParam(defaultValue = "20") int size,
+            @RequestParam(defaultValue = "views") String sort,
+            @RequestParam(required = false, defaultValue = "") String location,
+            @RequestParam(required = false, defaultValue = "") String keyword,
+            @RequestParam(required = false, defaultValue = "") String experience,
+            @RequestParam(required = false, defaultValue = "") String salary
+    ) {
+        System.out.println("Request Parameters - location: [" + location + "], keyword: [" + keyword +
+                "], experience: [" + experience + "], salary: [" + salary + "]");
+        PageRequest pageable = PageRequest.of(page, size, Sort.by(sort).descending());
+        Page<Job> jobs = service.getJobs(keyword, location, experience, salary, pageable);
 
-        PageRequest pageRequest = PageRequest.of(page, size);
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Cache-Control", "no-cache, no-store, must-revalidate");
+        headers.add("Pragma", "no-cache");
+        headers.add("Expires", "0");
 
-        Page<JobResponse> jobs = jobPostingService.getJobs(jobRequest, pageRequest);
-        return ResponseEntity.ok(jobs);
+        return new ResponseEntity<>(jobs, headers, HttpStatus.OK);
     }
+
 
     @GetMapping("/{id}")
-    public ResponseEntity<JobResponse> getJobById(@PathVariable Long id) {
-        JobResponse job = jobPostingService.getJobById(id);
-        return ResponseEntity.ok(job);
+    public Job getJobById(@PathVariable Long id) {
+        Job job = service.getJobById(id);
+        if (job == null) {
+            System.out.println("No job found with ID: " + id);
+        }
+        return job;
     }
+
 }
