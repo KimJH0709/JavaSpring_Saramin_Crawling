@@ -2,9 +2,13 @@ package com.kjh.wsd.saramIn_crawling.user.model;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 @Entity
 @Data
+@Getter
+@Setter
 @Table(name = "users")
 public class User {
     @Id
@@ -16,7 +20,4 @@ public class User {
 
     @Column(nullable = false)
     private String password;
-
-    @Column(nullable = false, unique = true)
-    private String email;
 }

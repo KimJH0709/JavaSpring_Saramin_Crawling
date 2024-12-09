@@ -1,10 +1,10 @@
 package com.kjh.wsd.saramIn_crawling.auth.security;
 
-
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
@@ -34,7 +34,9 @@ public class JwtFilter extends OncePerRequestFilter {
         }
 
         if (username != null && jwtUtil.validateToken(token)) {
-            SecurityContextHolder.getContext().setAuthentication(null); // 여기서 인증 객체를 설정 가능
+            UsernamePasswordAuthenticationToken authentication =
+                    new UsernamePasswordAuthenticationToken(username, null, null);
+            SecurityContextHolder.getContext().setAuthentication(authentication);
         }
 
         filterChain.doFilter(request, response);
