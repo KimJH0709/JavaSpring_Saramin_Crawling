@@ -23,6 +23,7 @@ public class Job {
     private String requirements;
     private String employmentType;
     private String salary;
+    private String sector;
 
     private int views;
 }
