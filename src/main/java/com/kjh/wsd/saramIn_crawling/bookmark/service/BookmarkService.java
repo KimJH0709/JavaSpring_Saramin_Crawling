@@ -1,5 +1,6 @@
 package com.kjh.wsd.saramIn_crawling.bookmark.service;
 
+import com.kjh.wsd.saramIn_crawling.auth.security.JwtUtil;
 import com.kjh.wsd.saramIn_crawling.bookmark.model.Bookmark;
 import com.kjh.wsd.saramIn_crawling.bookmark.repository.BookmarkRepository;
 import com.kjh.wsd.saramIn_crawling.job.model.Job;
@@ -19,11 +20,11 @@ public class BookmarkService {
 
     private final BookmarkRepository bookmarkRepository;
     private final JobRepository jobRepository;
+    private final JwtUtil jwtUtil;
 
     // 북마크 추가 또는 삭제
-    public String toggleBookmark(Long jobId) {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String username = authentication.getName();
+    public String toggleBookmark(Long jobId, String token) {
+        String username = jwtUtil.extractUsername(token);
 
         Job job = jobRepository.findById(jobId)
                 .orElseThrow(() -> new IllegalArgumentException("Job not found"));
@@ -44,9 +45,8 @@ public class BookmarkService {
     }
 
     // 사용자의 북마크 목록 조회
-    public Page<Bookmark> getBookmarks(Pageable pageable) {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String username = authentication.getName();
+    public Page<Bookmark> getBookmarks(Pageable pageable, String token) {
+        String username = jwtUtil.extractUsername(token);
 
         return bookmarkRepository.findByUsername(username, pageable);
     }

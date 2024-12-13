@@ -21,8 +21,15 @@ public class BookmarkController {
     // 북마크 추가 또는 삭제
     @PostMapping("/{jobId}")
     @Operation(summary = "Toggle bookmark", description = "Add or remove a bookmark for the specified job ID.")
-    public ResponseEntity<String> toggleBookmark(@PathVariable Long jobId) {
-        String result = service.toggleBookmark(jobId);
+    public ResponseEntity<String> toggleBookmark(
+            @PathVariable Long jobId,
+            @CookieValue(name = "ACCESS_TOKEN", required = false) String token
+    ) {
+        if (token == null || token.isEmpty()) {
+            return ResponseEntity.status(401).body("Unauthorized: Missing token");
+        }
+
+        String result = service.toggleBookmark(jobId, token);
         return ResponseEntity.ok(result);
     }
 
@@ -31,10 +38,15 @@ public class BookmarkController {
     @Operation(summary = "Get all bookmarks", description = "Retrieve a paginated list of bookmarks for the authenticated user.")
     public ResponseEntity<Page<Bookmark>> getBookmarks(
             @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size
+            @RequestParam(defaultValue = "10") int size,
+            @CookieValue(name = "ACCESS_TOKEN", required = false) String token
     ) {
+        if (token == null || token.isEmpty()) {
+            return ResponseEntity.status(401).build();
+        }
+
         PageRequest pageable = PageRequest.of(page, size);
-        Page<Bookmark> bookmarks = service.getBookmarks(pageable);
+        Page<Bookmark> bookmarks = service.getBookmarks(pageable, token);
         return ResponseEntity.ok(bookmarks);
     }
 }
