@@ -33,7 +33,7 @@ public class JwtFilter extends OncePerRequestFilter {
             username = jwtUtil.extractUsername(token);
         }
 
-        if (username != null && jwtUtil.validateToken(token)) {
+        if (username != null && SecurityContextHolder.getContext().getAuthentication() == null && jwtUtil.validateToken(token)) {
             UsernamePasswordAuthenticationToken authentication =
                     new UsernamePasswordAuthenticationToken(username, null, null);
             SecurityContextHolder.getContext().setAuthentication(authentication);
@@ -41,4 +41,13 @@ public class JwtFilter extends OncePerRequestFilter {
 
         filterChain.doFilter(request, response);
     }
+
+    @Override
+    protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
+        String path = request.getRequestURI();
+        boolean exclude = path.startsWith("/swagger-ui") || path.startsWith("/v3/api-docs");
+        System.out.println("Path: " + path + ", Exclude: " + exclude); // 로그 추가
+        return exclude;
+    }
+
 }

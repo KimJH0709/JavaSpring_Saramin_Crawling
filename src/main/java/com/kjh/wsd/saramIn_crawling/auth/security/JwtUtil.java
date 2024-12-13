@@ -14,7 +14,7 @@ public class JwtUtil {
 
     private static final String SECRET_KEY_STRING = "Your-Very-Strong-Secret-Key-For-JWT";
     private static final SecretKey SECRET_KEY = Keys.hmacShaKeyFor(SECRET_KEY_STRING.getBytes());
-    private static final long EXPIRATION_TIME = 1000 * 60 * 60;
+    private static final long EXPIRATION_TIME = 1000 * 60 * 60; // 1 hour
 
     // JWT 생성
     public String generateToken(String subject) {
@@ -26,6 +26,7 @@ public class JwtUtil {
                 .compact();
     }
 
+    // JWT에서 사용자 이름 추출
     public String extractUsername(String token) {
         try {
             return getClaims(token).getSubject();
@@ -34,7 +35,7 @@ public class JwtUtil {
         }
     }
 
-    // JWT 유효성 확인 (만료 여부도 포함)
+    // JWT 유효성 확인 (만료 여부 포함)
     public boolean validateToken(String token) {
         try {
             Claims claims = getClaims(token);
@@ -44,7 +45,7 @@ public class JwtUtil {
         }
     }
 
-    // Claims 추출
+    // JWT의 Claims 추출
     private Claims getClaims(String token) {
         return Jwts.parserBuilder()
                 .setSigningKey(SECRET_KEY)
