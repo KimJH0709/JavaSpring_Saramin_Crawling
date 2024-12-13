@@ -58,4 +58,23 @@ public class JwtUtil {
     private boolean isTokenExpired(Claims claims) {
         return claims.getExpiration().before(new Date());
     }
+
+    public int getAccessTokenExpiry() {
+        return 60 * 60; // 1시간 (초 단위)
+    }
+
+    public int getRefreshTokenExpiry() {
+        return 60 * 60 * 24 * 7; // 7일 (초 단위)
+    }
+
+    public String generateRefreshToken(String subject) {
+        return Jwts.builder()
+                .setSubject(subject)
+                .setIssuedAt(new Date())
+                .setExpiration(new Date(System.currentTimeMillis() + getRefreshTokenExpiry() * 1000))
+                .signWith(SECRET_KEY, SignatureAlgorithm.HS256)
+                .compact();
+    }
+
+
 }

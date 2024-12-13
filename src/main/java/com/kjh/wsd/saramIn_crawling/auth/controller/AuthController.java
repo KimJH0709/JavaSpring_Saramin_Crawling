@@ -4,6 +4,8 @@ import com.kjh.wsd.saramIn_crawling.auth.dto.*;
 import com.kjh.wsd.saramIn_crawling.auth.service.AuthService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -27,33 +29,42 @@ public class AuthController {
         return ResponseEntity.ok("User registered successfully.");
     }
 
-    @Operation(summary = "로그인", description = "사용자 이름과 비밀번호로 로그인하고 JWT 토큰을 반환합니다.")
+    @Operation(summary = "로그인", description = "사용자 이름과 비밀번호로 로그인하고 쿠키에 JWT를 저장합니다.")
     @PostMapping("/login")
     public ResponseEntity<String> login(
             @Parameter(description = "로그인 요청 데이터", required = true)
-            @RequestBody LoginRequest loginRequest
+            @RequestBody LoginRequest loginRequest,
+            HttpServletResponse response
     ) {
-        String token = authService.loginUser(loginRequest.getUsername(), loginRequest.getPassword());
-        return ResponseEntity.ok(token);
+        authService.loginUser(loginRequest.getUsername(), loginRequest.getPassword(), response);
+        return ResponseEntity.ok("Login successful.");
     }
 
-    @Operation(summary = "리프레시 토큰", description = "기존 토큰을 기반으로 새로운 JWT 토큰을 발급받습니다.")
+    @Operation(summary = "리프레시 토큰", description = "리프레시 토큰으로 새로운 액세스 토큰을 발급받습니다.")
     @PostMapping("/refresh")
     public ResponseEntity<String> refreshToken(
-            @Parameter(description = "Authorization 헤더에 전달된 리프레시 토큰", required = true)
-            @RequestHeader("Authorization") String refreshToken
+            @CookieValue(value = "REFRESH_TOKEN", required = false) String refreshToken,
+            HttpServletResponse response
     ) {
-        String newToken = authService.refreshToken(refreshToken);
-        return ResponseEntity.ok(newToken);
+        if (refreshToken == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Refresh token is missing");
+        }
+        authService.refreshAccessToken(refreshToken, response);
+        return ResponseEntity.ok("Access token refreshed successfully.");
     }
 
     @Operation(summary = "비밀번호 변경", description = "현재 사용자의 비밀번호를 업데이트합니다.")
+    // 프로필 업데이트 (쿠키 활용)
     @PutMapping("/profile")
     public ResponseEntity<String> updateProfile(
-            @Parameter(description = "프로필 업데이트 요청 데이터", required = true)
-            @RequestBody ProfileUpdateRequest updateRequest
+            @RequestBody ProfileUpdateRequest updateRequest,
+            @CookieValue(name = "ACCESS_TOKEN", required = false) String accessToken
     ) {
-        authService.updateProfile(updateRequest);
+        if (accessToken == null || accessToken.isEmpty()) {
+            return ResponseEntity.status(401).body("Unauthorized: No access token provided.");
+        }
+
+        authService.updateProfile(updateRequest, accessToken);
         return ResponseEntity.ok("Profile updated successfully.");
     }
 }
