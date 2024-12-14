@@ -4,6 +4,9 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
 import lombok.*;
 
+/**
+ * 채용 공고 엔티티
+ */
 @Entity
 @Data
 @NoArgsConstructor
@@ -17,7 +20,7 @@ public class Job {
     @Schema(description = "채용 공고 ID", example = "101")
     private Long id;
 
-    @Schema(description = "채용 공고 제목", example = "Software Engineer")
+    @Schema(description = "채용 공고 제목", example = "개발자")
     private String title;
 
     @Schema(description = "회사 이름", example = "Tech Corp")
@@ -26,25 +29,27 @@ public class Job {
     @Schema(description = "채용 공고 URL", example = "https://example.com/job/101")
     private String url;
 
-    @Schema(description = "마감일", example = "2024-12-31")
+    @Schema(description = "마감일", example = "12/31")
     private String deadline;
 
-    @Schema(description = "근무 위치", example = "Seoul")
+    @Schema(description = "근무 위치", example = "서울")
     private String location;
 
-    @Schema(description = "요구 경력", example = "2 years")
+    @Schema(description = "요구 경력", example = "경력, 신입")
     private String experience;
 
-    @Schema(description = "요구 사항", example = "Proficient in Java, Spring Boot")
+    @Schema(description = "요구 사항", example = "Java, Python")
     private String requirements;
 
-    @Schema(description = "고용 형태", example = "Full-time")
-    private String employmentType;
+    @Schema(description = "고용 형태", example = "계약직, 정규직")
+    @Column(name = "employment_type") // 정확한 컬럼 이름
+    private String employment_type;
 
-    @Schema(description = "급여 정보", example = "Negotiable")
+
+    @Schema(description = "급여 정보", example = "3000")
     private String salary;
 
-    @Schema(description = "산업 분야", example = "IT/Software")
+    @Schema(description = "산업 분야", example = "개발자")
     private String sector;
 
     @Schema(description = "조회수", example = "100")

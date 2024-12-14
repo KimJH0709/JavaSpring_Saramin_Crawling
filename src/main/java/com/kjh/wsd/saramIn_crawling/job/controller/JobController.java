@@ -12,6 +12,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+/**
+ * 채용 공고 관련 API 컨트롤러
+ */
 @RestController
 @RequestMapping("/jobs")
 @RequiredArgsConstructor
@@ -19,6 +22,18 @@ public class JobController {
 
     private final JobService service;
 
+    /**
+     * 채용 공고 목록을 조회합니다.
+     *
+     * @param page 페이지 번호 (0부터 시작)
+     * @param size 페이지 크기
+     * @param location 근무 위치 필터
+     * @param keyword 검색 키워드 필터
+     * @param experience 요구 경력 필터
+     * @param salary 급여 필터
+     * @param token 인증 토큰 (쿠키에서 추출)
+     * @return 페이징된 채용 공고 목록
+     */
     @Operation(summary = "채용 공고 목록 조회", description = "페이지네이션, 필터를 이용해 채용 공고 목록을 조회합니다.")
     @GetMapping
     public ResponseEntity<Page<Job>> getJobs(
@@ -28,19 +43,19 @@ public class JobController {
             @Parameter(description = "페이지 크기", example = "20")
             @RequestParam(defaultValue = "20") int size,
 
-            @Parameter(description = "근무 위치 필터", example = "Seoul")
+            @Parameter(description = "근무 위치 필터", example = "서울")
             @RequestParam(required = false, defaultValue = "") String location,
 
             @Parameter(description = "키워드 필터", example = "Java")
             @RequestParam(required = false, defaultValue = "") String keyword,
 
-            @Parameter(description = "요구 경력 필터", example = "2 years")
+            @Parameter(description = "요구 경력 필터", example = "경력, 신입")
             @RequestParam(required = false, defaultValue = "") String experience,
 
-            @Parameter(description = "급여 필터", example = "Negotiable")
+            @Parameter(description = "급여 필터", example = "4500, 정보없음")
             @RequestParam(required = false, defaultValue = "") String salary,
 
-            @CookieValue(name = "ACCESS_TOKEN", required = false) String token // 쿠키에서 토큰 추출
+            @CookieValue(name = "ACCESS_TOKEN", required = false) String token
     ) {
         if (token == null || !service.isTokenValid(token)) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
@@ -57,11 +72,18 @@ public class JobController {
         return new ResponseEntity<>(jobs, headers, HttpStatus.OK);
     }
 
+    /**
+     * 특정 채용 공고를 ID로 조회합니다.
+     *
+     * @param id 채용 공고 ID
+     * @param token 인증 토큰 (쿠키에서 추출)
+     * @return 채용 공고 상세 정보
+     */
     @Operation(summary = "채용 공고 상세 조회", description = "ID를 이용해 특정 채용 공고의 상세 정보를 조회합니다.")
     @GetMapping("/{id}")
     public ResponseEntity<Job> getJobById(
             @Parameter(description = "채용 공고 ID", example = "101") @PathVariable Long id,
-            @CookieValue(name = "ACCESS_TOKEN", required = false) String token // 쿠키에서 토큰 추출
+            @CookieValue(name = "ACCESS_TOKEN", required = false) String token
     ) {
         if (token == null || !service.isTokenValid(token)) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();

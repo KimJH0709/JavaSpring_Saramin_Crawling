@@ -5,6 +5,10 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
 import lombok.*;
 
+/**
+ * 북마크 엔티티
+ * 특정 사용자와 공고 간의 북마크 관계를 나타냅니다.
+ */
 @Entity
 @Data
 @NoArgsConstructor
