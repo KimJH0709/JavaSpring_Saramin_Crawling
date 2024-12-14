@@ -7,7 +7,6 @@ import io.swagger.v3.oas.annotations.Parameter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,7 +19,7 @@ public class JobController {
 
     private final JobService service;
 
-    @Operation(summary = "채용 공고 목록 조회", description = "페이지네이션, 정렬, 필터를 이용해 채용 공고 목록을 조회합니다.")
+    @Operation(summary = "채용 공고 목록 조회", description = "페이지네이션, 필터를 이용해 채용 공고 목록을 조회합니다.")
     @GetMapping
     public ResponseEntity<Page<Job>> getJobs(
             @Parameter(description = "페이지 번호 (0부터 시작)", example = "0")
@@ -28,9 +27,6 @@ public class JobController {
 
             @Parameter(description = "페이지 크기", example = "20")
             @RequestParam(defaultValue = "20") int size,
-
-            @Parameter(description = "정렬 기준 (예: views)", example = "views")
-            @RequestParam(defaultValue = "views") String sort,
 
             @Parameter(description = "근무 위치 필터", example = "Seoul")
             @RequestParam(required = false, defaultValue = "") String location,
@@ -42,9 +38,15 @@ public class JobController {
             @RequestParam(required = false, defaultValue = "") String experience,
 
             @Parameter(description = "급여 필터", example = "Negotiable")
-            @RequestParam(required = false, defaultValue = "") String salary
+            @RequestParam(required = false, defaultValue = "") String salary,
+
+            @CookieValue(name = "ACCESS_TOKEN", required = false) String token // 쿠키에서 토큰 추출
     ) {
-        PageRequest pageable = PageRequest.of(page, size, Sort.by(sort).descending());
+        if (token == null || !service.isTokenValid(token)) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+
+        PageRequest pageable = PageRequest.of(page, size);
         Page<Job> jobs = service.getJobs(keyword, location, experience, salary, pageable);
 
         HttpHeaders headers = new HttpHeaders();
@@ -57,13 +59,15 @@ public class JobController {
 
     @Operation(summary = "채용 공고 상세 조회", description = "ID를 이용해 특정 채용 공고의 상세 정보를 조회합니다.")
     @GetMapping("/{id}")
-    public Job getJobById(
-            @Parameter(description = "채용 공고 ID", example = "101") @PathVariable Long id
+    public ResponseEntity<Job> getJobById(
+            @Parameter(description = "채용 공고 ID", example = "101") @PathVariable Long id,
+            @CookieValue(name = "ACCESS_TOKEN", required = false) String token // 쿠키에서 토큰 추출
     ) {
-        Job job = service.getJobById(id);
-        if (job == null) {
-            System.out.println("No job found with ID: " + id);
+        if (token == null || !service.isTokenValid(token)) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
-        return job;
+
+        Job job = service.getJobById(id);
+        return ResponseEntity.ok(job);
     }
 }
