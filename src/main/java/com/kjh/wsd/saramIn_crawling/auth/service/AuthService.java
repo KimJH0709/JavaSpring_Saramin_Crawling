@@ -88,9 +88,12 @@ public class AuthService {
     private void addCookie(HttpServletResponse response, String name, String value, int expiry) {
         Cookie cookie = new Cookie(name, value);
         cookie.setHttpOnly(true);
-        cookie.setSecure(true);
+        cookie.setSecure(false);
         cookie.setPath("/");
         cookie.setMaxAge(expiry);
+        cookie.setAttribute("SameSite", "Lax"); // HTTP 환경에서는 SameSite=Lax로 설정
         response.addCookie(cookie);
     }
+
+
 }

@@ -39,11 +39,15 @@ public class JwtUtil {
     public boolean validateToken(String token) {
         try {
             Claims claims = getClaims(token);
-            return !isTokenExpired(claims);
+            boolean expired = isTokenExpired(claims);
+            System.out.println("Token Validity: " + !expired + ", Claims: " + claims);
+            return !expired;
         } catch (Exception e) {
+            System.out.println("Invalid token: " + e.getMessage());
             return false;
         }
     }
+
 
     // JWT의 Claims 추출
     private Claims getClaims(String token) {

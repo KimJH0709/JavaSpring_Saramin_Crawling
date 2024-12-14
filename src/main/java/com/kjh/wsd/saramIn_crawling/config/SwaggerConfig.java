@@ -17,9 +17,9 @@ public class SwaggerConfig {
                         .title("SaramIn Crawling API")
                         .version("1.0")
                         .description("API documentation for SaramIn Crawling project"))
-                .addSecurityItem(new SecurityRequirement().addList("Bearer"))
+                .addSecurityItem(new SecurityRequirement().addList("BearerAuth"))
                 .components(new io.swagger.v3.oas.models.Components()
-                        .addSecuritySchemes("Bearer", new SecurityScheme()
+                        .addSecuritySchemes("BearerAuth", new SecurityScheme()
                                 .type(SecurityScheme.Type.HTTP)
                                 .scheme("bearer")
                                 .bearerFormat("JWT")));

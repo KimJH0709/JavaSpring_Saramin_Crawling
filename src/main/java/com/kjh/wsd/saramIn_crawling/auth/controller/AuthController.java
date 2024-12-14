@@ -43,10 +43,11 @@ public class AuthController {
     @Operation(summary = "리프레시 토큰", description = "리프레시 토큰으로 새로운 액세스 토큰을 발급받습니다.")
     @PostMapping("/refresh")
     public ResponseEntity<String> refreshToken(
-            @CookieValue(value = "REFRESH_TOKEN", required = false) String refreshToken,
+            @CookieValue(value = "REFRESH_TOKEN", required = false, defaultValue = "NONE") String refreshToken,
             HttpServletResponse response
     ) {
-        if (refreshToken == null) {
+        System.out.println("Received Refresh Token: " + refreshToken); // 디버그용
+        if ("NONE".equals(refreshToken)) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Refresh token is missing");
         }
         authService.refreshAccessToken(refreshToken, response);
