@@ -38,6 +38,7 @@ java -jar build/libs/saramIn-crawling-0.0.1-SNAPSHOT.jar
 | POST        | `/auth/register` | 회원가입                         | `{ "username": "user1", "password": "pass123" }` |
 | POST        | `/auth/login`    | 로그인 및 JWT 발급                | `{ "username": "user1", "password": "pass123" }` |
 | POST        | `/auth/refresh`  | 리프레시 토큰을 이용한 액세스 갱신 | 쿠키에 `REFRESH_TOKEN` 포함 필요       |
+| PUT         | `/auth/profile`  | 사용자 프로필 정보 수정 (비밀번호 변경) | `{ "password": "newpassword123" }` |
 
 ---
 
