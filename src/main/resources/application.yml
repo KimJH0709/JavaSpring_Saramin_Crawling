@@ -1,6 +1,7 @@
 spring:
   datasource:
     url: jdbc:postgresql://localhost:5432/saramin
+#    url: jdbc:postgresql://localhost:13043/saramin
     username: postgres
     password: password
   jpa:
