@@ -6,13 +6,11 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 
+import java.util.Optional;
+
 public interface ApplicationRepository extends JpaRepository<Application, Long> {
 
-    // 중복 지원 확인
     boolean existsByUniqueKey(String uniqueKey);
-
-    // 사용자별 지원 내역 조회
     Page<Application> findByUsername(String username, Pageable pageable);
+    Optional<Application> findByUsernameAndJobId(String username, Long jobId);
 }
-
-

@@ -37,7 +37,7 @@ public class BookmarkController {
             @CookieValue(name = "ACCESS_TOKEN", required = false) String token
     ) {
         if (token == null || token.isEmpty()) {
-            return ResponseEntity.status(401).body("Unauthorized: Missing token");
+            return ResponseEntity.status(401).body("로그인을 먼저 해주세요.");
         }
 
         String result = service.toggleBookmark(jobId, token);
@@ -55,13 +55,13 @@ public class BookmarkController {
      */
     @GetMapping
     @Operation(summary = "북마크 목록 조회", description = "사용자의 북마크 목록을 페이징하여 반환합니다.")
-    public ResponseEntity<Page<Bookmark>> getBookmarks(
+    public ResponseEntity<?> getBookmarks(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
             @CookieValue(name = "ACCESS_TOKEN", required = false) String token
     ) {
         if (token == null || token.isEmpty()) {
-            return ResponseEntity.status(401).build();
+            return ResponseEntity.status(401).body("로그인을 먼저 해주세요.");
         }
 
         PageRequest pageable = PageRequest.of(page, size);
