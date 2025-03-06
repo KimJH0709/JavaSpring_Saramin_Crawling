@@ -67,10 +67,10 @@ public class AuthService {
      */
     public void loginUser(String username, String password, HttpServletResponse response) {
         User user = userRepository.findByUsername(username)
-                .orElseThrow(() -> new UserNotFoundException("Invalid username"));
+                .orElseThrow(() -> new UserNotFoundException("틀린 username 입니다."));
 
         if (!passwordEncoder.matches(password, user.getPassword())) {
-            throw new InvalidCredentialsException("Invalid password");
+            throw new InvalidCredentialsException("틀린 password 입니다.");
         }
 
         String accessToken = jwtUtil.generateToken(username);
@@ -91,12 +91,12 @@ public class AuthService {
      */
     public void refreshAccessToken(String refreshToken, HttpServletResponse response) {
         if (!jwtUtil.validateToken(refreshToken)) {
-            throw new InvalidCredentialsException("Invalid or expired refresh token");
+            throw new InvalidCredentialsException("틀린 refresh Token이거나 만료되었습니다.");
         }
 
         String username = jwtUtil.extractUsername(refreshToken);
         userRepository.findByUsername(username)
-                .orElseThrow(() -> new UserNotFoundException("User not found"));
+                .orElseThrow(() -> new UserNotFoundException("User를 찾을 수 없습니다."));
 
         String newAccessToken = jwtUtil.generateToken(username);
 
@@ -114,12 +114,12 @@ public class AuthService {
      */
     public void updateProfile(ProfileUpdateRequest updateRequest, String accessToken) {
         if (!jwtUtil.validateToken(accessToken)) {
-            throw new InvalidCredentialsException("Invalid or expired access token");
+            throw new InvalidCredentialsException("틀린 access Token이거나 만료되었습니다.");
         }
 
         String username = jwtUtil.extractUsername(accessToken);
         User user = userRepository.findByUsername(username)
-                .orElseThrow(() -> new UserNotFoundException("User not found"));
+                .orElseThrow(() -> new UserNotFoundException("User를 찾을 수 없습니다."));
 
         if (updateRequest.getPassword() != null) {
             user.setPassword(passwordEncoder.encode(updateRequest.getPassword()));

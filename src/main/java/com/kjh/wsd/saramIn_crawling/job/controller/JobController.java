@@ -36,7 +36,7 @@ public class JobController {
      */
     @Operation(summary = "채용 공고 목록 조회", description = "페이지네이션, 필터를 이용해 채용 공고 목록을 조회합니다.")
     @GetMapping
-    public ResponseEntity<Page<Job>> getJobs(
+    public ResponseEntity<?> getJobs(
             @Parameter(description = "페이지 번호 (0부터 시작)", example = "0")
             @RequestParam(defaultValue = "0") int page,
 
@@ -58,7 +58,7 @@ public class JobController {
             @CookieValue(name = "ACCESS_TOKEN", required = false) String token
     ) {
         if (token == null || !service.isTokenValid(token)) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("로그인을 먼저 해주세요.");
         }
 
         PageRequest pageable = PageRequest.of(page, size);
@@ -81,12 +81,12 @@ public class JobController {
      */
     @Operation(summary = "채용 공고 상세 조회", description = "ID를 이용해 특정 채용 공고의 상세 정보를 조회합니다.")
     @GetMapping("/{id}")
-    public ResponseEntity<Job> getJobById(
+    public ResponseEntity<?> getJobById(
             @Parameter(description = "채용 공고 ID", example = "101") @PathVariable Long id,
             @CookieValue(name = "ACCESS_TOKEN", required = false) String token
     ) {
         if (token == null || !service.isTokenValid(token)) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("로그인을 먼저 해주세요.");
         }
 
         Job job = service.getJobById(id);

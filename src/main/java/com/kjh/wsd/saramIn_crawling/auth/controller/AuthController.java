@@ -41,7 +41,7 @@ public class AuthController {
             @RequestBody RegisterRequest registerRequest
     ) {
         authService.registerUser(registerRequest);
-        return ResponseEntity.ok("User registered successfully.");
+        return ResponseEntity.ok("회원가입 성공.");
     }
 
     /**
@@ -59,7 +59,7 @@ public class AuthController {
             HttpServletResponse response
     ) {
         authService.loginUser(loginRequest.getUsername(), loginRequest.getPassword(), response);
-        return ResponseEntity.ok("Login successful.");
+        return ResponseEntity.ok("Login 성공.");
     }
 
     /**
@@ -77,10 +77,10 @@ public class AuthController {
     ) {
         System.out.println("Received Refresh Token: " + refreshToken);
         if ("NONE".equals(refreshToken)) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Refresh token is missing");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Refresh token이 없습니다.");
         }
         authService.refreshAccessToken(refreshToken, response);
-        return ResponseEntity.ok("Access token refreshed successfully.");
+        return ResponseEntity.ok("Access token이 새로 발급되었습니다.");
     }
 
     /**
@@ -97,10 +97,10 @@ public class AuthController {
             @CookieValue(name = "ACCESS_TOKEN", required = false) String accessToken
     ) {
         if (accessToken == null || accessToken.isEmpty()) {
-            return ResponseEntity.status(401).body("Unauthorized: No access token provided.");
+            return ResponseEntity.status(401).body("Access Token이 없습니다.");
         }
 
         authService.updateProfile(updateRequest, accessToken);
-        return ResponseEntity.ok("Profile updated successfully.");
+        return ResponseEntity.ok("비밀번호가 변경되었습니다.");
     }
 }

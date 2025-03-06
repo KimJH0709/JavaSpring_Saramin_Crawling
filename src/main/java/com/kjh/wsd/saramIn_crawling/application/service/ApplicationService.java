@@ -37,12 +37,12 @@ public class ApplicationService {
         String username = jwtUtil.extractUsername(token);
 
         Job job = jobRepository.findById(jobId)
-                .orElseThrow(() -> new IllegalArgumentException("Job not found"));
+                .orElseThrow(() -> new IllegalArgumentException("Job을 찾을 수 없습니다."));
 
         String uniqueKey = generateUniqueKey(username, jobId);
 
         if (applicationRepository.existsByUniqueKey(uniqueKey)) {
-            throw new IllegalStateException("You have already applied for this job.");
+            throw new IllegalStateException("이미 지원된 공고 입니다.");
         }
 
         Application application = Application.builder()
@@ -64,27 +64,25 @@ public class ApplicationService {
      */
     public Page<Application> getApplications(String token, Pageable pageable) {
         String username = jwtUtil.extractUsername(token);
+        System.out.println("Fetching applications for username: " + username);
         return applicationRepository.findByUsername(username, pageable);
     }
 
     /**
-     * 사용자가 특정 지원 내역을 취소합니다.
+     * 사용자가 특정 공고에 대한 지원 내역을 취소합니다.
      *
-     * @param token         사용자 인증을 위한 JWT 토큰
-     * @param applicationId 취소하려는 지원 ID
+     * @param token 사용자 인증을 위한 JWT 토큰
+     * @param jobId 취소하려는 공고 ID
      * @throws IllegalStateException 사용자가 해당 지원을 취소할 권한이 없는 경우
      * @throws IllegalArgumentException 취소하려는 지원 내역을 찾을 수 없는 경우
      */
-    public void cancelApplication(String token, Long applicationId) {
+    public void cancelApplication(String token, Long jobId) {
         String username = jwtUtil.extractUsername(token);
 
-        Application application = applicationRepository.findById(applicationId)
-                .orElseThrow(() -> new IllegalArgumentException("Application not found"));
+        Application application = applicationRepository.findByUsernameAndJobId(username, jobId)
+                .orElseThrow(() -> new IllegalArgumentException("지원 내역을 찾을 수 없습니다."));
 
-        if (!application.getUsername().equals(username)) {
-            throw new IllegalStateException("Unauthorized to cancel this application");
-        }
-
+        // 지원 내역 삭제
         applicationRepository.delete(application);
     }
 

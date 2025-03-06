@@ -37,20 +37,20 @@ public class BookmarkService {
         String username = jwtUtil.extractUsername(token);
 
         Job job = jobRepository.findById(jobId)
-                .orElseThrow(() -> new IllegalArgumentException("Job not found"));
+                .orElseThrow(() -> new IllegalArgumentException("Job을 찾을 수 없습니다."));
 
         Optional<Bookmark> existingBookmark = bookmarkRepository.findByUsernameAndJob(username, job);
 
         if (existingBookmark.isPresent()) {
             bookmarkRepository.delete(existingBookmark.get());
-            return "Unbookmarked";
+            return "북마크 해제";
         } else {
             Bookmark bookmark = Bookmark.builder()
                     .job(job)
                     .username(username)
                     .build();
             bookmarkRepository.save(bookmark);
-            return "Bookmarked";
+            return "북마크 등록";
         }
     }
 
